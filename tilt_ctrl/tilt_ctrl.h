@@ -10,7 +10,7 @@
     #error Wrong include order: MAVLINK_TILT_CTRL.H MUST NOT BE DIRECTLY USED. Include mavlink.h from the same directory instead or set ALL AND EVERY defines from MAVLINK.H manually accordingly, including the #define MAVLINK_H call.
 #endif
 
-#define MAVLINK_TILT_CTRL_XML_HASH -7276094771961915554
+#define MAVLINK_TILT_CTRL_XML_HASH 3124328164799449765
 
 #ifdef __cplusplus
 extern "C" {
