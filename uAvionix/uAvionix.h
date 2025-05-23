@@ -10,7 +10,7 @@
     #error Wrong include order: MAVLINK_UAVIONIX.H MUST NOT BE DIRECTLY USED. Include mavlink.h from the same directory instead or set ALL AND EVERY defines from MAVLINK.H manually accordingly, including the #define MAVLINK_H call.
 #endif
 
-#define MAVLINK_UAVIONIX_XML_HASH -3567140989812473519
+#define MAVLINK_UAVIONIX_XML_HASH 4060876329079297500
 
 #ifdef __cplusplus
 extern "C" {
