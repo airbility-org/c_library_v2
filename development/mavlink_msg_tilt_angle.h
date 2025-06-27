@@ -1,30 +1,30 @@
 #pragma once
 // MESSAGE TILT_ANGLE PACKING
 
-#define MAVLINK_MSG_ID_TILT_ANGLE 18000
+#define MAVLINK_MSG_ID_TILT_ANGLE 513
 
 
 typedef struct __mavlink_tilt_angle_t {
  uint32_t time_boot_ms; /*< [ms] Timestamp (time since system boot).*/
  float tilt_fl; /*< [deg] Front left tilt angle*/
  float tilt_fr; /*< [deg] Front right tilt angle*/
- float tilt_rl; /*< [deg] Rear left tilt angle*/
- float tilt_rr; /*< [deg] Rear right tilt angle*/
+ float tilt_rl; /*< [deg] Right left tilt angle*/
+ float tilt_rr; /*< [deg] Right right tilt angle*/
 } mavlink_tilt_angle_t;
 
 #define MAVLINK_MSG_ID_TILT_ANGLE_LEN 20
 #define MAVLINK_MSG_ID_TILT_ANGLE_MIN_LEN 20
-#define MAVLINK_MSG_ID_18000_LEN 20
-#define MAVLINK_MSG_ID_18000_MIN_LEN 20
+#define MAVLINK_MSG_ID_513_LEN 20
+#define MAVLINK_MSG_ID_513_MIN_LEN 20
 
 #define MAVLINK_MSG_ID_TILT_ANGLE_CRC 130
-#define MAVLINK_MSG_ID_18000_CRC 130
+#define MAVLINK_MSG_ID_513_CRC 130
 
 
 
 #if MAVLINK_COMMAND_24BIT
 #define MAVLINK_MESSAGE_INFO_TILT_ANGLE { \
-    18000, \
+    513, \
     "TILT_ANGLE", \
     5, \
     {  { "time_boot_ms", NULL, MAVLINK_TYPE_UINT32_T, 0, 0, offsetof(mavlink_tilt_angle_t, time_boot_ms) }, \
@@ -56,8 +56,8 @@ typedef struct __mavlink_tilt_angle_t {
  * @param time_boot_ms [ms] Timestamp (time since system boot).
  * @param tilt_fl [deg] Front left tilt angle
  * @param tilt_fr [deg] Front right tilt angle
- * @param tilt_rl [deg] Rear left tilt angle
- * @param tilt_rr [deg] Rear right tilt angle
+ * @param tilt_rl [deg] Right left tilt angle
+ * @param tilt_rr [deg] Right right tilt angle
  * @return length of the message in bytes (excluding serial stream start sign)
  */
 static inline uint16_t mavlink_msg_tilt_angle_pack(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg,
@@ -96,8 +96,8 @@ static inline uint16_t mavlink_msg_tilt_angle_pack(uint8_t system_id, uint8_t co
  * @param time_boot_ms [ms] Timestamp (time since system boot).
  * @param tilt_fl [deg] Front left tilt angle
  * @param tilt_fr [deg] Front right tilt angle
- * @param tilt_rl [deg] Rear left tilt angle
- * @param tilt_rr [deg] Rear right tilt angle
+ * @param tilt_rl [deg] Right left tilt angle
+ * @param tilt_rr [deg] Right right tilt angle
  * @return length of the message in bytes (excluding serial stream start sign)
  */
 static inline uint16_t mavlink_msg_tilt_angle_pack_chan(uint8_t system_id, uint8_t component_id, uint8_t chan,
@@ -162,8 +162,8 @@ static inline uint16_t mavlink_msg_tilt_angle_encode_chan(uint8_t system_id, uin
  * @param time_boot_ms [ms] Timestamp (time since system boot).
  * @param tilt_fl [deg] Front left tilt angle
  * @param tilt_fr [deg] Front right tilt angle
- * @param tilt_rl [deg] Rear left tilt angle
- * @param tilt_rr [deg] Rear right tilt angle
+ * @param tilt_rl [deg] Right left tilt angle
+ * @param tilt_rr [deg] Right right tilt angle
  */
 #ifdef MAVLINK_USE_CONVENIENCE_FUNCTIONS
 
@@ -274,7 +274,7 @@ static inline float mavlink_msg_tilt_angle_get_tilt_fr(const mavlink_message_t* 
 /**
  * @brief Get field tilt_rl from tilt_angle message
  *
- * @return [deg] Rear left tilt angle
+ * @return [deg] Right left tilt angle
  */
 static inline float mavlink_msg_tilt_angle_get_tilt_rl(const mavlink_message_t* msg)
 {
@@ -284,7 +284,7 @@ static inline float mavlink_msg_tilt_angle_get_tilt_rl(const mavlink_message_t* 
 /**
  * @brief Get field tilt_rr from tilt_angle message
  *
- * @return [deg] Rear right tilt angle
+ * @return [deg] Right right tilt angle
  */
 static inline float mavlink_msg_tilt_angle_get_tilt_rr(const mavlink_message_t* msg)
 {
