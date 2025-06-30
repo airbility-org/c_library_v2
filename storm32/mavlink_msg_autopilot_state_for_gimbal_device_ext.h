@@ -94,6 +94,54 @@ static inline uint16_t mavlink_msg_autopilot_state_for_gimbal_device_ext_pack(ui
 }
 
 /**
+ * @brief Pack a autopilot_state_for_gimbal_device_ext message
+ * @param system_id ID of this system
+ * @param component_id ID of this component (e.g. 200 for IMU)
+ * @param status MAVLink status structure
+ * @param msg The MAVLink message to compress the data into
+ *
+ * @param target_system  System ID.
+ * @param target_component  Component ID.
+ * @param time_boot_us [us] Timestamp (time since system boot).
+ * @param wind_x [m/s] Wind X speed in NED (North,Est, Down). NAN if unknown.
+ * @param wind_y [m/s] Wind Y speed in NED (North, East, Down). NAN if unknown.
+ * @param wind_correction_angle [rad] Correction angle due to wind. NaN if unknown.
+ * @return length of the message in bytes (excluding serial stream start sign)
+ */
+static inline uint16_t mavlink_msg_autopilot_state_for_gimbal_device_ext_pack_status(uint8_t system_id, uint8_t component_id, mavlink_status_t *_status, mavlink_message_t* msg,
+                               uint8_t target_system, uint8_t target_component, uint64_t time_boot_us, float wind_x, float wind_y, float wind_correction_angle)
+{
+#if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
+    char buf[MAVLINK_MSG_ID_AUTOPILOT_STATE_FOR_GIMBAL_DEVICE_EXT_LEN];
+    _mav_put_uint64_t(buf, 0, time_boot_us);
+    _mav_put_float(buf, 8, wind_x);
+    _mav_put_float(buf, 12, wind_y);
+    _mav_put_float(buf, 16, wind_correction_angle);
+    _mav_put_uint8_t(buf, 20, target_system);
+    _mav_put_uint8_t(buf, 21, target_component);
+
+        memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, MAVLINK_MSG_ID_AUTOPILOT_STATE_FOR_GIMBAL_DEVICE_EXT_LEN);
+#else
+    mavlink_autopilot_state_for_gimbal_device_ext_t packet;
+    packet.time_boot_us = time_boot_us;
+    packet.wind_x = wind_x;
+    packet.wind_y = wind_y;
+    packet.wind_correction_angle = wind_correction_angle;
+    packet.target_system = target_system;
+    packet.target_component = target_component;
+
+        memcpy(_MAV_PAYLOAD_NON_CONST(msg), &packet, MAVLINK_MSG_ID_AUTOPILOT_STATE_FOR_GIMBAL_DEVICE_EXT_LEN);
+#endif
+
+    msg->msgid = MAVLINK_MSG_ID_AUTOPILOT_STATE_FOR_GIMBAL_DEVICE_EXT;
+#if MAVLINK_CRC_EXTRA
+    return mavlink_finalize_message_buffer(msg, system_id, component_id, _status, MAVLINK_MSG_ID_AUTOPILOT_STATE_FOR_GIMBAL_DEVICE_EXT_MIN_LEN, MAVLINK_MSG_ID_AUTOPILOT_STATE_FOR_GIMBAL_DEVICE_EXT_LEN, MAVLINK_MSG_ID_AUTOPILOT_STATE_FOR_GIMBAL_DEVICE_EXT_CRC);
+#else
+    return mavlink_finalize_message_buffer(msg, system_id, component_id, _status, MAVLINK_MSG_ID_AUTOPILOT_STATE_FOR_GIMBAL_DEVICE_EXT_MIN_LEN, MAVLINK_MSG_ID_AUTOPILOT_STATE_FOR_GIMBAL_DEVICE_EXT_LEN);
+#endif
+}
+
+/**
  * @brief Pack a autopilot_state_for_gimbal_device_ext message on a channel
  * @param system_id ID of this system
  * @param component_id ID of this component (e.g. 200 for IMU)
@@ -162,6 +210,20 @@ static inline uint16_t mavlink_msg_autopilot_state_for_gimbal_device_ext_encode(
 static inline uint16_t mavlink_msg_autopilot_state_for_gimbal_device_ext_encode_chan(uint8_t system_id, uint8_t component_id, uint8_t chan, mavlink_message_t* msg, const mavlink_autopilot_state_for_gimbal_device_ext_t* autopilot_state_for_gimbal_device_ext)
 {
     return mavlink_msg_autopilot_state_for_gimbal_device_ext_pack_chan(system_id, component_id, chan, msg, autopilot_state_for_gimbal_device_ext->target_system, autopilot_state_for_gimbal_device_ext->target_component, autopilot_state_for_gimbal_device_ext->time_boot_us, autopilot_state_for_gimbal_device_ext->wind_x, autopilot_state_for_gimbal_device_ext->wind_y, autopilot_state_for_gimbal_device_ext->wind_correction_angle);
+}
+
+/**
+ * @brief Encode a autopilot_state_for_gimbal_device_ext struct with provided status structure
+ *
+ * @param system_id ID of this system
+ * @param component_id ID of this component (e.g. 200 for IMU)
+ * @param status MAVLink status structure
+ * @param msg The MAVLink message to compress the data into
+ * @param autopilot_state_for_gimbal_device_ext C-struct to read the message contents from
+ */
+static inline uint16_t mavlink_msg_autopilot_state_for_gimbal_device_ext_encode_status(uint8_t system_id, uint8_t component_id, mavlink_status_t* _status, mavlink_message_t* msg, const mavlink_autopilot_state_for_gimbal_device_ext_t* autopilot_state_for_gimbal_device_ext)
+{
+    return mavlink_msg_autopilot_state_for_gimbal_device_ext_pack_status(system_id, component_id, _status, msg,  autopilot_state_for_gimbal_device_ext->target_system, autopilot_state_for_gimbal_device_ext->target_component, autopilot_state_for_gimbal_device_ext->time_boot_us, autopilot_state_for_gimbal_device_ext->wind_x, autopilot_state_for_gimbal_device_ext->wind_y, autopilot_state_for_gimbal_device_ext->wind_correction_angle);
 }
 
 /**

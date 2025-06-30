@@ -130,6 +130,72 @@ static inline uint16_t mavlink_msg_gnss_integrity_pack(uint8_t system_id, uint8_
 }
 
 /**
+ * @brief Pack a gnss_integrity message
+ * @param system_id ID of this system
+ * @param component_id ID of this component (e.g. 200 for IMU)
+ * @param status MAVLink status structure
+ * @param msg The MAVLink message to compress the data into
+ *
+ * @param id  GNSS receiver id. Must match instance ids of other messages from same receiver.
+ * @param system_errors  Errors in the GPS system.
+ * @param authentication_state  Signal authentication state of the GPS system.
+ * @param jamming_state  Signal jamming state of the GPS system.
+ * @param spoofing_state  Signal spoofing state of the GPS system.
+ * @param raim_state  The state of the RAIM processing.
+ * @param raim_hfom [cm] Horizontal expected accuracy using satellites successfully validated using RAIM.
+ * @param raim_vfom [cm] Vertical expected accuracy using satellites successfully validated using RAIM.
+ * @param corrections_quality  An abstract value representing the estimated quality of incoming corrections, or 255 if not available.
+ * @param system_status_summary  An abstract value representing the overall status of the receiver, or 255 if not available.
+ * @param gnss_signal_quality  An abstract value representing the quality of incoming GNSS signals, or 255 if not available.
+ * @param post_processing_quality  An abstract value representing the estimated PPK quality, or 255 if not available.
+ * @return length of the message in bytes (excluding serial stream start sign)
+ */
+static inline uint16_t mavlink_msg_gnss_integrity_pack_status(uint8_t system_id, uint8_t component_id, mavlink_status_t *_status, mavlink_message_t* msg,
+                               uint8_t id, uint32_t system_errors, uint8_t authentication_state, uint8_t jamming_state, uint8_t spoofing_state, uint8_t raim_state, uint16_t raim_hfom, uint16_t raim_vfom, uint8_t corrections_quality, uint8_t system_status_summary, uint8_t gnss_signal_quality, uint8_t post_processing_quality)
+{
+#if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
+    char buf[MAVLINK_MSG_ID_GNSS_INTEGRITY_LEN];
+    _mav_put_uint32_t(buf, 0, system_errors);
+    _mav_put_uint16_t(buf, 4, raim_hfom);
+    _mav_put_uint16_t(buf, 6, raim_vfom);
+    _mav_put_uint8_t(buf, 8, id);
+    _mav_put_uint8_t(buf, 9, authentication_state);
+    _mav_put_uint8_t(buf, 10, jamming_state);
+    _mav_put_uint8_t(buf, 11, spoofing_state);
+    _mav_put_uint8_t(buf, 12, raim_state);
+    _mav_put_uint8_t(buf, 13, corrections_quality);
+    _mav_put_uint8_t(buf, 14, system_status_summary);
+    _mav_put_uint8_t(buf, 15, gnss_signal_quality);
+    _mav_put_uint8_t(buf, 16, post_processing_quality);
+
+        memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, MAVLINK_MSG_ID_GNSS_INTEGRITY_LEN);
+#else
+    mavlink_gnss_integrity_t packet;
+    packet.system_errors = system_errors;
+    packet.raim_hfom = raim_hfom;
+    packet.raim_vfom = raim_vfom;
+    packet.id = id;
+    packet.authentication_state = authentication_state;
+    packet.jamming_state = jamming_state;
+    packet.spoofing_state = spoofing_state;
+    packet.raim_state = raim_state;
+    packet.corrections_quality = corrections_quality;
+    packet.system_status_summary = system_status_summary;
+    packet.gnss_signal_quality = gnss_signal_quality;
+    packet.post_processing_quality = post_processing_quality;
+
+        memcpy(_MAV_PAYLOAD_NON_CONST(msg), &packet, MAVLINK_MSG_ID_GNSS_INTEGRITY_LEN);
+#endif
+
+    msg->msgid = MAVLINK_MSG_ID_GNSS_INTEGRITY;
+#if MAVLINK_CRC_EXTRA
+    return mavlink_finalize_message_buffer(msg, system_id, component_id, _status, MAVLINK_MSG_ID_GNSS_INTEGRITY_MIN_LEN, MAVLINK_MSG_ID_GNSS_INTEGRITY_LEN, MAVLINK_MSG_ID_GNSS_INTEGRITY_CRC);
+#else
+    return mavlink_finalize_message_buffer(msg, system_id, component_id, _status, MAVLINK_MSG_ID_GNSS_INTEGRITY_MIN_LEN, MAVLINK_MSG_ID_GNSS_INTEGRITY_LEN);
+#endif
+}
+
+/**
  * @brief Pack a gnss_integrity message on a channel
  * @param system_id ID of this system
  * @param component_id ID of this component (e.g. 200 for IMU)
@@ -216,6 +282,20 @@ static inline uint16_t mavlink_msg_gnss_integrity_encode(uint8_t system_id, uint
 static inline uint16_t mavlink_msg_gnss_integrity_encode_chan(uint8_t system_id, uint8_t component_id, uint8_t chan, mavlink_message_t* msg, const mavlink_gnss_integrity_t* gnss_integrity)
 {
     return mavlink_msg_gnss_integrity_pack_chan(system_id, component_id, chan, msg, gnss_integrity->id, gnss_integrity->system_errors, gnss_integrity->authentication_state, gnss_integrity->jamming_state, gnss_integrity->spoofing_state, gnss_integrity->raim_state, gnss_integrity->raim_hfom, gnss_integrity->raim_vfom, gnss_integrity->corrections_quality, gnss_integrity->system_status_summary, gnss_integrity->gnss_signal_quality, gnss_integrity->post_processing_quality);
+}
+
+/**
+ * @brief Encode a gnss_integrity struct with provided status structure
+ *
+ * @param system_id ID of this system
+ * @param component_id ID of this component (e.g. 200 for IMU)
+ * @param status MAVLink status structure
+ * @param msg The MAVLink message to compress the data into
+ * @param gnss_integrity C-struct to read the message contents from
+ */
+static inline uint16_t mavlink_msg_gnss_integrity_encode_status(uint8_t system_id, uint8_t component_id, mavlink_status_t* _status, mavlink_message_t* msg, const mavlink_gnss_integrity_t* gnss_integrity)
+{
+    return mavlink_msg_gnss_integrity_pack_status(system_id, component_id, _status, msg,  gnss_integrity->id, gnss_integrity->system_errors, gnss_integrity->authentication_state, gnss_integrity->jamming_state, gnss_integrity->spoofing_state, gnss_integrity->raim_state, gnss_integrity->raim_hfom, gnss_integrity->raim_vfom, gnss_integrity->corrections_quality, gnss_integrity->system_status_summary, gnss_integrity->gnss_signal_quality, gnss_integrity->post_processing_quality);
 }
 
 /**

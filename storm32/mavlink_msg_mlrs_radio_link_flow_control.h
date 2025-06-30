@@ -88,6 +88,51 @@ static inline uint16_t mavlink_msg_mlrs_radio_link_flow_control_pack(uint8_t sys
 }
 
 /**
+ * @brief Pack a mlrs_radio_link_flow_control message
+ * @param system_id ID of this system
+ * @param component_id ID of this component (e.g. 200 for IMU)
+ * @param status MAVLink status structure
+ * @param msg The MAVLink message to compress the data into
+ *
+ * @param tx_ser_rate [bytes/s] Transmitted bytes per second, UINT16_MAX: invalid/unknown.
+ * @param rx_ser_rate [bytes/s] Recieved bytes per second, UINT16_MAX: invalid/unknown.
+ * @param tx_used_ser_bandwidth [c%] Transmit bandwidth consumption. Values: 0..100, UINT8_MAX: invalid/unknown.
+ * @param rx_used_ser_bandwidth [c%] Receive bandwidth consumption. Values: 0..100, UINT8_MAX: invalid/unknown.
+ * @param txbuf [c%] For compatibility with legacy method. UINT8_MAX: unknown.
+ * @return length of the message in bytes (excluding serial stream start sign)
+ */
+static inline uint16_t mavlink_msg_mlrs_radio_link_flow_control_pack_status(uint8_t system_id, uint8_t component_id, mavlink_status_t *_status, mavlink_message_t* msg,
+                               uint16_t tx_ser_rate, uint16_t rx_ser_rate, uint8_t tx_used_ser_bandwidth, uint8_t rx_used_ser_bandwidth, uint8_t txbuf)
+{
+#if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
+    char buf[MAVLINK_MSG_ID_MLRS_RADIO_LINK_FLOW_CONTROL_LEN];
+    _mav_put_uint16_t(buf, 0, tx_ser_rate);
+    _mav_put_uint16_t(buf, 2, rx_ser_rate);
+    _mav_put_uint8_t(buf, 4, tx_used_ser_bandwidth);
+    _mav_put_uint8_t(buf, 5, rx_used_ser_bandwidth);
+    _mav_put_uint8_t(buf, 6, txbuf);
+
+        memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, MAVLINK_MSG_ID_MLRS_RADIO_LINK_FLOW_CONTROL_LEN);
+#else
+    mavlink_mlrs_radio_link_flow_control_t packet;
+    packet.tx_ser_rate = tx_ser_rate;
+    packet.rx_ser_rate = rx_ser_rate;
+    packet.tx_used_ser_bandwidth = tx_used_ser_bandwidth;
+    packet.rx_used_ser_bandwidth = rx_used_ser_bandwidth;
+    packet.txbuf = txbuf;
+
+        memcpy(_MAV_PAYLOAD_NON_CONST(msg), &packet, MAVLINK_MSG_ID_MLRS_RADIO_LINK_FLOW_CONTROL_LEN);
+#endif
+
+    msg->msgid = MAVLINK_MSG_ID_MLRS_RADIO_LINK_FLOW_CONTROL;
+#if MAVLINK_CRC_EXTRA
+    return mavlink_finalize_message_buffer(msg, system_id, component_id, _status, MAVLINK_MSG_ID_MLRS_RADIO_LINK_FLOW_CONTROL_MIN_LEN, MAVLINK_MSG_ID_MLRS_RADIO_LINK_FLOW_CONTROL_LEN, MAVLINK_MSG_ID_MLRS_RADIO_LINK_FLOW_CONTROL_CRC);
+#else
+    return mavlink_finalize_message_buffer(msg, system_id, component_id, _status, MAVLINK_MSG_ID_MLRS_RADIO_LINK_FLOW_CONTROL_MIN_LEN, MAVLINK_MSG_ID_MLRS_RADIO_LINK_FLOW_CONTROL_LEN);
+#endif
+}
+
+/**
  * @brief Pack a mlrs_radio_link_flow_control message on a channel
  * @param system_id ID of this system
  * @param component_id ID of this component (e.g. 200 for IMU)
@@ -153,6 +198,20 @@ static inline uint16_t mavlink_msg_mlrs_radio_link_flow_control_encode(uint8_t s
 static inline uint16_t mavlink_msg_mlrs_radio_link_flow_control_encode_chan(uint8_t system_id, uint8_t component_id, uint8_t chan, mavlink_message_t* msg, const mavlink_mlrs_radio_link_flow_control_t* mlrs_radio_link_flow_control)
 {
     return mavlink_msg_mlrs_radio_link_flow_control_pack_chan(system_id, component_id, chan, msg, mlrs_radio_link_flow_control->tx_ser_rate, mlrs_radio_link_flow_control->rx_ser_rate, mlrs_radio_link_flow_control->tx_used_ser_bandwidth, mlrs_radio_link_flow_control->rx_used_ser_bandwidth, mlrs_radio_link_flow_control->txbuf);
+}
+
+/**
+ * @brief Encode a mlrs_radio_link_flow_control struct with provided status structure
+ *
+ * @param system_id ID of this system
+ * @param component_id ID of this component (e.g. 200 for IMU)
+ * @param status MAVLink status structure
+ * @param msg The MAVLink message to compress the data into
+ * @param mlrs_radio_link_flow_control C-struct to read the message contents from
+ */
+static inline uint16_t mavlink_msg_mlrs_radio_link_flow_control_encode_status(uint8_t system_id, uint8_t component_id, mavlink_status_t* _status, mavlink_message_t* msg, const mavlink_mlrs_radio_link_flow_control_t* mlrs_radio_link_flow_control)
+{
+    return mavlink_msg_mlrs_radio_link_flow_control_pack_status(system_id, component_id, _status, msg,  mlrs_radio_link_flow_control->tx_ser_rate, mlrs_radio_link_flow_control->rx_ser_rate, mlrs_radio_link_flow_control->tx_used_ser_bandwidth, mlrs_radio_link_flow_control->rx_used_ser_bandwidth, mlrs_radio_link_flow_control->txbuf);
 }
 
 /**

@@ -88,6 +88,51 @@ static inline uint16_t mavlink_msg_tilt_angle_pack(uint8_t system_id, uint8_t co
 }
 
 /**
+ * @brief Pack a tilt_angle message
+ * @param system_id ID of this system
+ * @param component_id ID of this component (e.g. 200 for IMU)
+ * @param status MAVLink status structure
+ * @param msg The MAVLink message to compress the data into
+ *
+ * @param time_boot_ms [ms] Timestamp (time since system boot).
+ * @param tilt_fl [deg] Front left tilt angle
+ * @param tilt_fr [deg] Front right tilt angle
+ * @param tilt_rl [deg] Right left tilt angle
+ * @param tilt_rr [deg] Right right tilt angle
+ * @return length of the message in bytes (excluding serial stream start sign)
+ */
+static inline uint16_t mavlink_msg_tilt_angle_pack_status(uint8_t system_id, uint8_t component_id, mavlink_status_t *_status, mavlink_message_t* msg,
+                               uint32_t time_boot_ms, float tilt_fl, float tilt_fr, float tilt_rl, float tilt_rr)
+{
+#if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
+    char buf[MAVLINK_MSG_ID_TILT_ANGLE_LEN];
+    _mav_put_uint32_t(buf, 0, time_boot_ms);
+    _mav_put_float(buf, 4, tilt_fl);
+    _mav_put_float(buf, 8, tilt_fr);
+    _mav_put_float(buf, 12, tilt_rl);
+    _mav_put_float(buf, 16, tilt_rr);
+
+        memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, MAVLINK_MSG_ID_TILT_ANGLE_LEN);
+#else
+    mavlink_tilt_angle_t packet;
+    packet.time_boot_ms = time_boot_ms;
+    packet.tilt_fl = tilt_fl;
+    packet.tilt_fr = tilt_fr;
+    packet.tilt_rl = tilt_rl;
+    packet.tilt_rr = tilt_rr;
+
+        memcpy(_MAV_PAYLOAD_NON_CONST(msg), &packet, MAVLINK_MSG_ID_TILT_ANGLE_LEN);
+#endif
+
+    msg->msgid = MAVLINK_MSG_ID_TILT_ANGLE;
+#if MAVLINK_CRC_EXTRA
+    return mavlink_finalize_message_buffer(msg, system_id, component_id, _status, MAVLINK_MSG_ID_TILT_ANGLE_MIN_LEN, MAVLINK_MSG_ID_TILT_ANGLE_LEN, MAVLINK_MSG_ID_TILT_ANGLE_CRC);
+#else
+    return mavlink_finalize_message_buffer(msg, system_id, component_id, _status, MAVLINK_MSG_ID_TILT_ANGLE_MIN_LEN, MAVLINK_MSG_ID_TILT_ANGLE_LEN);
+#endif
+}
+
+/**
  * @brief Pack a tilt_angle message on a channel
  * @param system_id ID of this system
  * @param component_id ID of this component (e.g. 200 for IMU)
@@ -153,6 +198,20 @@ static inline uint16_t mavlink_msg_tilt_angle_encode(uint8_t system_id, uint8_t 
 static inline uint16_t mavlink_msg_tilt_angle_encode_chan(uint8_t system_id, uint8_t component_id, uint8_t chan, mavlink_message_t* msg, const mavlink_tilt_angle_t* tilt_angle)
 {
     return mavlink_msg_tilt_angle_pack_chan(system_id, component_id, chan, msg, tilt_angle->time_boot_ms, tilt_angle->tilt_fl, tilt_angle->tilt_fr, tilt_angle->tilt_rl, tilt_angle->tilt_rr);
+}
+
+/**
+ * @brief Encode a tilt_angle struct with provided status structure
+ *
+ * @param system_id ID of this system
+ * @param component_id ID of this component (e.g. 200 for IMU)
+ * @param status MAVLink status structure
+ * @param msg The MAVLink message to compress the data into
+ * @param tilt_angle C-struct to read the message contents from
+ */
+static inline uint16_t mavlink_msg_tilt_angle_encode_status(uint8_t system_id, uint8_t component_id, mavlink_status_t* _status, mavlink_message_t* msg, const mavlink_tilt_angle_t* tilt_angle)
+{
+    return mavlink_msg_tilt_angle_pack_status(system_id, component_id, _status, msg,  tilt_angle->time_boot_ms, tilt_angle->tilt_fl, tilt_angle->tilt_fr, tilt_angle->tilt_rl, tilt_angle->tilt_rr);
 }
 
 /**

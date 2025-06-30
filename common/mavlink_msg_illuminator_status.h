@@ -124,6 +124,69 @@ static inline uint16_t mavlink_msg_illuminator_status_pack(uint8_t system_id, ui
 }
 
 /**
+ * @brief Pack a illuminator_status message
+ * @param system_id ID of this system
+ * @param component_id ID of this component (e.g. 200 for IMU)
+ * @param status MAVLink status structure
+ * @param msg The MAVLink message to compress the data into
+ *
+ * @param uptime_ms [ms] Time since the start-up of the illuminator in ms
+ * @param enable  0: Illuminators OFF, 1: Illuminators ON
+ * @param mode_bitmask  Supported illuminator modes
+ * @param error_status  Errors
+ * @param mode  Illuminator mode
+ * @param brightness [%] Illuminator brightness
+ * @param strobe_period [s] Illuminator strobing period in seconds
+ * @param strobe_duty_cycle [%] Illuminator strobing duty cycle
+ * @param temp_c  Temperature in Celsius
+ * @param min_strobe_period [s] Minimum strobing period in seconds
+ * @param max_strobe_period [s] Maximum strobing period in seconds
+ * @return length of the message in bytes (excluding serial stream start sign)
+ */
+static inline uint16_t mavlink_msg_illuminator_status_pack_status(uint8_t system_id, uint8_t component_id, mavlink_status_t *_status, mavlink_message_t* msg,
+                               uint32_t uptime_ms, uint8_t enable, uint8_t mode_bitmask, uint32_t error_status, uint8_t mode, float brightness, float strobe_period, float strobe_duty_cycle, float temp_c, float min_strobe_period, float max_strobe_period)
+{
+#if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
+    char buf[MAVLINK_MSG_ID_ILLUMINATOR_STATUS_LEN];
+    _mav_put_uint32_t(buf, 0, uptime_ms);
+    _mav_put_uint32_t(buf, 4, error_status);
+    _mav_put_float(buf, 8, brightness);
+    _mav_put_float(buf, 12, strobe_period);
+    _mav_put_float(buf, 16, strobe_duty_cycle);
+    _mav_put_float(buf, 20, temp_c);
+    _mav_put_float(buf, 24, min_strobe_period);
+    _mav_put_float(buf, 28, max_strobe_period);
+    _mav_put_uint8_t(buf, 32, enable);
+    _mav_put_uint8_t(buf, 33, mode_bitmask);
+    _mav_put_uint8_t(buf, 34, mode);
+
+        memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, MAVLINK_MSG_ID_ILLUMINATOR_STATUS_LEN);
+#else
+    mavlink_illuminator_status_t packet;
+    packet.uptime_ms = uptime_ms;
+    packet.error_status = error_status;
+    packet.brightness = brightness;
+    packet.strobe_period = strobe_period;
+    packet.strobe_duty_cycle = strobe_duty_cycle;
+    packet.temp_c = temp_c;
+    packet.min_strobe_period = min_strobe_period;
+    packet.max_strobe_period = max_strobe_period;
+    packet.enable = enable;
+    packet.mode_bitmask = mode_bitmask;
+    packet.mode = mode;
+
+        memcpy(_MAV_PAYLOAD_NON_CONST(msg), &packet, MAVLINK_MSG_ID_ILLUMINATOR_STATUS_LEN);
+#endif
+
+    msg->msgid = MAVLINK_MSG_ID_ILLUMINATOR_STATUS;
+#if MAVLINK_CRC_EXTRA
+    return mavlink_finalize_message_buffer(msg, system_id, component_id, _status, MAVLINK_MSG_ID_ILLUMINATOR_STATUS_MIN_LEN, MAVLINK_MSG_ID_ILLUMINATOR_STATUS_LEN, MAVLINK_MSG_ID_ILLUMINATOR_STATUS_CRC);
+#else
+    return mavlink_finalize_message_buffer(msg, system_id, component_id, _status, MAVLINK_MSG_ID_ILLUMINATOR_STATUS_MIN_LEN, MAVLINK_MSG_ID_ILLUMINATOR_STATUS_LEN);
+#endif
+}
+
+/**
  * @brief Pack a illuminator_status message on a channel
  * @param system_id ID of this system
  * @param component_id ID of this component (e.g. 200 for IMU)
@@ -207,6 +270,20 @@ static inline uint16_t mavlink_msg_illuminator_status_encode(uint8_t system_id, 
 static inline uint16_t mavlink_msg_illuminator_status_encode_chan(uint8_t system_id, uint8_t component_id, uint8_t chan, mavlink_message_t* msg, const mavlink_illuminator_status_t* illuminator_status)
 {
     return mavlink_msg_illuminator_status_pack_chan(system_id, component_id, chan, msg, illuminator_status->uptime_ms, illuminator_status->enable, illuminator_status->mode_bitmask, illuminator_status->error_status, illuminator_status->mode, illuminator_status->brightness, illuminator_status->strobe_period, illuminator_status->strobe_duty_cycle, illuminator_status->temp_c, illuminator_status->min_strobe_period, illuminator_status->max_strobe_period);
+}
+
+/**
+ * @brief Encode a illuminator_status struct with provided status structure
+ *
+ * @param system_id ID of this system
+ * @param component_id ID of this component (e.g. 200 for IMU)
+ * @param status MAVLink status structure
+ * @param msg The MAVLink message to compress the data into
+ * @param illuminator_status C-struct to read the message contents from
+ */
+static inline uint16_t mavlink_msg_illuminator_status_encode_status(uint8_t system_id, uint8_t component_id, mavlink_status_t* _status, mavlink_message_t* msg, const mavlink_illuminator_status_t* illuminator_status)
+{
+    return mavlink_msg_illuminator_status_pack_status(system_id, component_id, _status, msg,  illuminator_status->uptime_ms, illuminator_status->enable, illuminator_status->mode_bitmask, illuminator_status->error_status, illuminator_status->mode, illuminator_status->brightness, illuminator_status->strobe_period, illuminator_status->strobe_duty_cycle, illuminator_status->temp_c, illuminator_status->min_strobe_period, illuminator_status->max_strobe_period);
 }
 
 /**

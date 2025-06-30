@@ -141,6 +141,76 @@ static inline uint16_t mavlink_msg_mlrs_radio_link_information_pack(uint8_t syst
 }
 
 /**
+ * @brief Pack a mlrs_radio_link_information message
+ * @param system_id ID of this system
+ * @param component_id ID of this component (e.g. 200 for IMU)
+ * @param status MAVLink status structure
+ * @param msg The MAVLink message to compress the data into
+ *
+ * @param target_system  System ID (ID of target system, normally flight controller).
+ * @param target_component  Component ID (normally 0 for broadcast).
+ * @param type  Radio link type. 0: unknown/generic type.
+ * @param mode  Operation mode. Radio link dependent. UINT8_MAX: ignore/unknown.
+ * @param tx_power [dBm] Tx transmit power in dBm. INT8_MAX: unknown.
+ * @param rx_power [dBm] Rx transmit power in dBm. INT8_MAX: unknown.
+ * @param tx_frame_rate [Hz] Frame rate in Hz (frames per second) for Tx to Rx transmission. 0: unknown.
+ * @param rx_frame_rate [Hz] Frame rate in Hz (frames per second) for Rx to Tx transmission. Normally equal to tx_packet_rate. 0: unknown.
+ * @param mode_str  Operation mode as human readable string. Radio link dependent. Terminated by NULL if the string length is less than 6 chars and WITHOUT NULL termination if the length is exactly 6 chars - applications have to provide 6+1 bytes storage if the mode is stored as string. Use a zero-length string if not known.
+ * @param band_str  Frequency band as human readable string. Radio link dependent. Terminated by NULL if the string length is less than 6 chars and WITHOUT NULL termination if the length is exactly 6 chars - applications have to provide 6+1 bytes storage if the mode is stored as string. Use a zero-length string if not known.
+ * @param tx_ser_data_rate  Maximum data rate of serial stream in bytes/s for Tx to Rx transmission. 0: unknown. UINT16_MAX: data rate is 64 KBytes/s or larger.
+ * @param rx_ser_data_rate  Maximum data rate of serial stream in bytes/s for Rx to Tx transmission. 0: unknown. UINT16_MAX: data rate is 64 KBytes/s or larger.
+ * @param tx_receive_sensitivity  Receive sensitivity of Tx in inverted dBm. 1..255 represents -1..-255 dBm, 0: unknown.
+ * @param rx_receive_sensitivity  Receive sensitivity of Rx in inverted dBm. 1..255 represents -1..-255 dBm, 0: unknown.
+ * @return length of the message in bytes (excluding serial stream start sign)
+ */
+static inline uint16_t mavlink_msg_mlrs_radio_link_information_pack_status(uint8_t system_id, uint8_t component_id, mavlink_status_t *_status, mavlink_message_t* msg,
+                               uint8_t target_system, uint8_t target_component, uint8_t type, uint8_t mode, int8_t tx_power, int8_t rx_power, uint16_t tx_frame_rate, uint16_t rx_frame_rate, const char *mode_str, const char *band_str, uint16_t tx_ser_data_rate, uint16_t rx_ser_data_rate, uint8_t tx_receive_sensitivity, uint8_t rx_receive_sensitivity)
+{
+#if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
+    char buf[MAVLINK_MSG_ID_MLRS_RADIO_LINK_INFORMATION_LEN];
+    _mav_put_uint16_t(buf, 0, tx_frame_rate);
+    _mav_put_uint16_t(buf, 2, rx_frame_rate);
+    _mav_put_uint16_t(buf, 4, tx_ser_data_rate);
+    _mav_put_uint16_t(buf, 6, rx_ser_data_rate);
+    _mav_put_uint8_t(buf, 8, target_system);
+    _mav_put_uint8_t(buf, 9, target_component);
+    _mav_put_uint8_t(buf, 10, type);
+    _mav_put_uint8_t(buf, 11, mode);
+    _mav_put_int8_t(buf, 12, tx_power);
+    _mav_put_int8_t(buf, 13, rx_power);
+    _mav_put_uint8_t(buf, 26, tx_receive_sensitivity);
+    _mav_put_uint8_t(buf, 27, rx_receive_sensitivity);
+    _mav_put_char_array(buf, 14, mode_str, 6);
+    _mav_put_char_array(buf, 20, band_str, 6);
+        memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, MAVLINK_MSG_ID_MLRS_RADIO_LINK_INFORMATION_LEN);
+#else
+    mavlink_mlrs_radio_link_information_t packet;
+    packet.tx_frame_rate = tx_frame_rate;
+    packet.rx_frame_rate = rx_frame_rate;
+    packet.tx_ser_data_rate = tx_ser_data_rate;
+    packet.rx_ser_data_rate = rx_ser_data_rate;
+    packet.target_system = target_system;
+    packet.target_component = target_component;
+    packet.type = type;
+    packet.mode = mode;
+    packet.tx_power = tx_power;
+    packet.rx_power = rx_power;
+    packet.tx_receive_sensitivity = tx_receive_sensitivity;
+    packet.rx_receive_sensitivity = rx_receive_sensitivity;
+    mav_array_memcpy(packet.mode_str, mode_str, sizeof(char)*6);
+    mav_array_memcpy(packet.band_str, band_str, sizeof(char)*6);
+        memcpy(_MAV_PAYLOAD_NON_CONST(msg), &packet, MAVLINK_MSG_ID_MLRS_RADIO_LINK_INFORMATION_LEN);
+#endif
+
+    msg->msgid = MAVLINK_MSG_ID_MLRS_RADIO_LINK_INFORMATION;
+#if MAVLINK_CRC_EXTRA
+    return mavlink_finalize_message_buffer(msg, system_id, component_id, _status, MAVLINK_MSG_ID_MLRS_RADIO_LINK_INFORMATION_MIN_LEN, MAVLINK_MSG_ID_MLRS_RADIO_LINK_INFORMATION_LEN, MAVLINK_MSG_ID_MLRS_RADIO_LINK_INFORMATION_CRC);
+#else
+    return mavlink_finalize_message_buffer(msg, system_id, component_id, _status, MAVLINK_MSG_ID_MLRS_RADIO_LINK_INFORMATION_MIN_LEN, MAVLINK_MSG_ID_MLRS_RADIO_LINK_INFORMATION_LEN);
+#endif
+}
+
+/**
  * @brief Pack a mlrs_radio_link_information message on a channel
  * @param system_id ID of this system
  * @param component_id ID of this component (e.g. 200 for IMU)
@@ -231,6 +301,20 @@ static inline uint16_t mavlink_msg_mlrs_radio_link_information_encode(uint8_t sy
 static inline uint16_t mavlink_msg_mlrs_radio_link_information_encode_chan(uint8_t system_id, uint8_t component_id, uint8_t chan, mavlink_message_t* msg, const mavlink_mlrs_radio_link_information_t* mlrs_radio_link_information)
 {
     return mavlink_msg_mlrs_radio_link_information_pack_chan(system_id, component_id, chan, msg, mlrs_radio_link_information->target_system, mlrs_radio_link_information->target_component, mlrs_radio_link_information->type, mlrs_radio_link_information->mode, mlrs_radio_link_information->tx_power, mlrs_radio_link_information->rx_power, mlrs_radio_link_information->tx_frame_rate, mlrs_radio_link_information->rx_frame_rate, mlrs_radio_link_information->mode_str, mlrs_radio_link_information->band_str, mlrs_radio_link_information->tx_ser_data_rate, mlrs_radio_link_information->rx_ser_data_rate, mlrs_radio_link_information->tx_receive_sensitivity, mlrs_radio_link_information->rx_receive_sensitivity);
+}
+
+/**
+ * @brief Encode a mlrs_radio_link_information struct with provided status structure
+ *
+ * @param system_id ID of this system
+ * @param component_id ID of this component (e.g. 200 for IMU)
+ * @param status MAVLink status structure
+ * @param msg The MAVLink message to compress the data into
+ * @param mlrs_radio_link_information C-struct to read the message contents from
+ */
+static inline uint16_t mavlink_msg_mlrs_radio_link_information_encode_status(uint8_t system_id, uint8_t component_id, mavlink_status_t* _status, mavlink_message_t* msg, const mavlink_mlrs_radio_link_information_t* mlrs_radio_link_information)
+{
+    return mavlink_msg_mlrs_radio_link_information_pack_status(system_id, component_id, _status, msg,  mlrs_radio_link_information->target_system, mlrs_radio_link_information->target_component, mlrs_radio_link_information->type, mlrs_radio_link_information->mode, mlrs_radio_link_information->tx_power, mlrs_radio_link_information->rx_power, mlrs_radio_link_information->tx_frame_rate, mlrs_radio_link_information->rx_frame_rate, mlrs_radio_link_information->mode_str, mlrs_radio_link_information->band_str, mlrs_radio_link_information->tx_ser_data_rate, mlrs_radio_link_information->rx_ser_data_rate, mlrs_radio_link_information->tx_receive_sensitivity, mlrs_radio_link_information->rx_receive_sensitivity);
 }
 
 /**

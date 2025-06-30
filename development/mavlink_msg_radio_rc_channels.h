@@ -96,6 +96,54 @@ static inline uint16_t mavlink_msg_radio_rc_channels_pack(uint8_t system_id, uin
 }
 
 /**
+ * @brief Pack a radio_rc_channels message
+ * @param system_id ID of this system
+ * @param component_id ID of this component (e.g. 200 for IMU)
+ * @param status MAVLink status structure
+ * @param msg The MAVLink message to compress the data into
+ *
+ * @param target_system  System ID (ID of target system, normally flight controller).
+ * @param target_component  Component ID (normally 0 for broadcast).
+ * @param time_last_update_ms [ms] Time when the data in the channels field were last updated (time since boot in the receiver's time domain).
+ * @param flags  Radio RC channels status flags.
+ * @param count  Total number of RC channels being received. This can be larger than 32, indicating that more channels are available but not given in this message.
+ * @param channels  RC channels.
+        Channel values are in centered 13 bit format. Range is -4096 to 4096, center is 0. Conversion to PWM is x * 5/32 + 1500.
+        Channels with indexes equal or above count should be set to 0, to benefit from MAVLink's trailing-zero trimming.
+ * @return length of the message in bytes (excluding serial stream start sign)
+ */
+static inline uint16_t mavlink_msg_radio_rc_channels_pack_status(uint8_t system_id, uint8_t component_id, mavlink_status_t *_status, mavlink_message_t* msg,
+                               uint8_t target_system, uint8_t target_component, uint32_t time_last_update_ms, uint16_t flags, uint8_t count, const int16_t *channels)
+{
+#if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
+    char buf[MAVLINK_MSG_ID_RADIO_RC_CHANNELS_LEN];
+    _mav_put_uint32_t(buf, 0, time_last_update_ms);
+    _mav_put_uint16_t(buf, 4, flags);
+    _mav_put_uint8_t(buf, 6, target_system);
+    _mav_put_uint8_t(buf, 7, target_component);
+    _mav_put_uint8_t(buf, 8, count);
+    _mav_put_int16_t_array(buf, 9, channels, 32);
+        memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, MAVLINK_MSG_ID_RADIO_RC_CHANNELS_LEN);
+#else
+    mavlink_radio_rc_channels_t packet;
+    packet.time_last_update_ms = time_last_update_ms;
+    packet.flags = flags;
+    packet.target_system = target_system;
+    packet.target_component = target_component;
+    packet.count = count;
+    mav_array_memcpy(packet.channels, channels, sizeof(int16_t)*32);
+        memcpy(_MAV_PAYLOAD_NON_CONST(msg), &packet, MAVLINK_MSG_ID_RADIO_RC_CHANNELS_LEN);
+#endif
+
+    msg->msgid = MAVLINK_MSG_ID_RADIO_RC_CHANNELS;
+#if MAVLINK_CRC_EXTRA
+    return mavlink_finalize_message_buffer(msg, system_id, component_id, _status, MAVLINK_MSG_ID_RADIO_RC_CHANNELS_MIN_LEN, MAVLINK_MSG_ID_RADIO_RC_CHANNELS_LEN, MAVLINK_MSG_ID_RADIO_RC_CHANNELS_CRC);
+#else
+    return mavlink_finalize_message_buffer(msg, system_id, component_id, _status, MAVLINK_MSG_ID_RADIO_RC_CHANNELS_MIN_LEN, MAVLINK_MSG_ID_RADIO_RC_CHANNELS_LEN);
+#endif
+}
+
+/**
  * @brief Pack a radio_rc_channels message on a channel
  * @param system_id ID of this system
  * @param component_id ID of this component (e.g. 200 for IMU)
@@ -164,6 +212,20 @@ static inline uint16_t mavlink_msg_radio_rc_channels_encode(uint8_t system_id, u
 static inline uint16_t mavlink_msg_radio_rc_channels_encode_chan(uint8_t system_id, uint8_t component_id, uint8_t chan, mavlink_message_t* msg, const mavlink_radio_rc_channels_t* radio_rc_channels)
 {
     return mavlink_msg_radio_rc_channels_pack_chan(system_id, component_id, chan, msg, radio_rc_channels->target_system, radio_rc_channels->target_component, radio_rc_channels->time_last_update_ms, radio_rc_channels->flags, radio_rc_channels->count, radio_rc_channels->channels);
+}
+
+/**
+ * @brief Encode a radio_rc_channels struct with provided status structure
+ *
+ * @param system_id ID of this system
+ * @param component_id ID of this component (e.g. 200 for IMU)
+ * @param status MAVLink status structure
+ * @param msg The MAVLink message to compress the data into
+ * @param radio_rc_channels C-struct to read the message contents from
+ */
+static inline uint16_t mavlink_msg_radio_rc_channels_encode_status(uint8_t system_id, uint8_t component_id, mavlink_status_t* _status, mavlink_message_t* msg, const mavlink_radio_rc_channels_t* radio_rc_channels)
+{
+    return mavlink_msg_radio_rc_channels_pack_status(system_id, component_id, _status, msg,  radio_rc_channels->target_system, radio_rc_channels->target_component, radio_rc_channels->time_last_update_ms, radio_rc_channels->flags, radio_rc_channels->count, radio_rc_channels->channels);
 }
 
 /**
