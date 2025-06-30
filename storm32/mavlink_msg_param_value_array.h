@@ -9,7 +9,7 @@ typedef struct __mavlink_param_value_array_t {
  uint16_t param_index_first; /*<  Index of the first onboard parameter in this array.*/
  uint16_t flags; /*<  Flags.*/
  uint8_t param_array_len; /*<  Number of onboard parameters in this array.*/
- uint8_t packet_buf[248]; /*<  Parameters buffer. Contains a series of variable length parameter blocks, one per parameter, with format as specifed elsewhere.*/
+ uint8_t packet_buf[248]; /*<  Parameters buffer. Contains a series of variable length parameter blocks, one per parameter, with format as specified elsewhere.*/
 } mavlink_param_value_array_t;
 
 #define MAVLINK_MSG_ID_PARAM_VALUE_ARRAY_LEN 255
@@ -57,7 +57,7 @@ typedef struct __mavlink_param_value_array_t {
  * @param param_index_first  Index of the first onboard parameter in this array.
  * @param param_array_len  Number of onboard parameters in this array.
  * @param flags  Flags.
- * @param packet_buf  Parameters buffer. Contains a series of variable length parameter blocks, one per parameter, with format as specifed elsewhere.
+ * @param packet_buf  Parameters buffer. Contains a series of variable length parameter blocks, one per parameter, with format as specified elsewhere.
  * @return length of the message in bytes (excluding serial stream start sign)
  */
 static inline uint16_t mavlink_msg_param_value_array_pack(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg,
@@ -86,6 +86,49 @@ static inline uint16_t mavlink_msg_param_value_array_pack(uint8_t system_id, uin
 }
 
 /**
+ * @brief Pack a param_value_array message
+ * @param system_id ID of this system
+ * @param component_id ID of this component (e.g. 200 for IMU)
+ * @param status MAVLink status structure
+ * @param msg The MAVLink message to compress the data into
+ *
+ * @param param_count  Total number of onboard parameters.
+ * @param param_index_first  Index of the first onboard parameter in this array.
+ * @param param_array_len  Number of onboard parameters in this array.
+ * @param flags  Flags.
+ * @param packet_buf  Parameters buffer. Contains a series of variable length parameter blocks, one per parameter, with format as specified elsewhere.
+ * @return length of the message in bytes (excluding serial stream start sign)
+ */
+static inline uint16_t mavlink_msg_param_value_array_pack_status(uint8_t system_id, uint8_t component_id, mavlink_status_t *_status, mavlink_message_t* msg,
+                               uint16_t param_count, uint16_t param_index_first, uint8_t param_array_len, uint16_t flags, const uint8_t *packet_buf)
+{
+#if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
+    char buf[MAVLINK_MSG_ID_PARAM_VALUE_ARRAY_LEN];
+    _mav_put_uint16_t(buf, 0, param_count);
+    _mav_put_uint16_t(buf, 2, param_index_first);
+    _mav_put_uint16_t(buf, 4, flags);
+    _mav_put_uint8_t(buf, 6, param_array_len);
+    _mav_put_uint8_t_array(buf, 7, packet_buf, 248);
+        memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, MAVLINK_MSG_ID_PARAM_VALUE_ARRAY_LEN);
+#else
+    mavlink_param_value_array_t packet;
+    packet.param_count = param_count;
+    packet.param_index_first = param_index_first;
+    packet.flags = flags;
+    packet.param_array_len = param_array_len;
+    mav_array_memcpy(packet.packet_buf, packet_buf, sizeof(uint8_t)*248);
+        memcpy(_MAV_PAYLOAD_NON_CONST(msg), &packet, MAVLINK_MSG_ID_PARAM_VALUE_ARRAY_LEN);
+#endif
+
+    msg->msgid = MAVLINK_MSG_ID_PARAM_VALUE_ARRAY;
+#if MAVLINK_CRC_EXTRA
+    return mavlink_finalize_message_buffer(msg, system_id, component_id, _status, MAVLINK_MSG_ID_PARAM_VALUE_ARRAY_MIN_LEN, MAVLINK_MSG_ID_PARAM_VALUE_ARRAY_LEN, MAVLINK_MSG_ID_PARAM_VALUE_ARRAY_CRC);
+#else
+    return mavlink_finalize_message_buffer(msg, system_id, component_id, _status, MAVLINK_MSG_ID_PARAM_VALUE_ARRAY_MIN_LEN, MAVLINK_MSG_ID_PARAM_VALUE_ARRAY_LEN);
+#endif
+}
+
+/**
  * @brief Pack a param_value_array message on a channel
  * @param system_id ID of this system
  * @param component_id ID of this component (e.g. 200 for IMU)
@@ -95,7 +138,7 @@ static inline uint16_t mavlink_msg_param_value_array_pack(uint8_t system_id, uin
  * @param param_index_first  Index of the first onboard parameter in this array.
  * @param param_array_len  Number of onboard parameters in this array.
  * @param flags  Flags.
- * @param packet_buf  Parameters buffer. Contains a series of variable length parameter blocks, one per parameter, with format as specifed elsewhere.
+ * @param packet_buf  Parameters buffer. Contains a series of variable length parameter blocks, one per parameter, with format as specified elsewhere.
  * @return length of the message in bytes (excluding serial stream start sign)
  */
 static inline uint16_t mavlink_msg_param_value_array_pack_chan(uint8_t system_id, uint8_t component_id, uint8_t chan,
@@ -152,6 +195,20 @@ static inline uint16_t mavlink_msg_param_value_array_encode_chan(uint8_t system_
 }
 
 /**
+ * @brief Encode a param_value_array struct with provided status structure
+ *
+ * @param system_id ID of this system
+ * @param component_id ID of this component (e.g. 200 for IMU)
+ * @param status MAVLink status structure
+ * @param msg The MAVLink message to compress the data into
+ * @param param_value_array C-struct to read the message contents from
+ */
+static inline uint16_t mavlink_msg_param_value_array_encode_status(uint8_t system_id, uint8_t component_id, mavlink_status_t* _status, mavlink_message_t* msg, const mavlink_param_value_array_t* param_value_array)
+{
+    return mavlink_msg_param_value_array_pack_status(system_id, component_id, _status, msg,  param_value_array->param_count, param_value_array->param_index_first, param_value_array->param_array_len, param_value_array->flags, param_value_array->packet_buf);
+}
+
+/**
  * @brief Send a param_value_array message
  * @param chan MAVLink channel to send the message
  *
@@ -159,7 +216,7 @@ static inline uint16_t mavlink_msg_param_value_array_encode_chan(uint8_t system_
  * @param param_index_first  Index of the first onboard parameter in this array.
  * @param param_array_len  Number of onboard parameters in this array.
  * @param flags  Flags.
- * @param packet_buf  Parameters buffer. Contains a series of variable length parameter blocks, one per parameter, with format as specifed elsewhere.
+ * @param packet_buf  Parameters buffer. Contains a series of variable length parameter blocks, one per parameter, with format as specified elsewhere.
  */
 #ifdef MAVLINK_USE_CONVENIENCE_FUNCTIONS
 
@@ -276,7 +333,7 @@ static inline uint16_t mavlink_msg_param_value_array_get_flags(const mavlink_mes
 /**
  * @brief Get field packet_buf from param_value_array message
  *
- * @return  Parameters buffer. Contains a series of variable length parameter blocks, one per parameter, with format as specifed elsewhere.
+ * @return  Parameters buffer. Contains a series of variable length parameter blocks, one per parameter, with format as specified elsewhere.
  */
 static inline uint16_t mavlink_msg_param_value_array_get_packet_buf(const mavlink_message_t* msg, uint8_t *packet_buf)
 {
